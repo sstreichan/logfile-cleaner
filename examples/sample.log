@@ -1,0 +1,65 @@
+2024-02-02 08:15:23.456 [INFO] Application started successfully
+2024-02-02 08:15:23.789 [DEBUG] Initializing configuration from /etc/app/config.json
+2024-02-02 08:15:24.012 [DEBUG] Database connection pool created with 10 connections
+2024-02-02 08:15:24.234 [INFO] Connected to database: postgresql://localhost:5432/appdb
+2024-02-02 08:15:24.567 [DEBUG] Loading user preferences for user_id=12345
+2024-02-02 08:15:24.890 [INFO] User session created: session_id=abc-def-ghi-123
+2024-02-02 08:15:25.123 [WARN] Cache miss for key: user:12345:preferences
+2024-02-02 08:15:25.456 [DEBUG] Fetching data from cache: MISS
+2024-02-02 08:15:25.789 [INFO] Processing request GET /api/users/12345
+2024-02-02 08:15:26.012 [DEBUG] Query executed in 23ms: SELECT * FROM users WHERE id = 12345
+2024-02-02 08:15:26.234 [INFO] Response sent with status code 200
+2024-02-02 08:15:26.567 [ERROR] Failed to connect to external service: timeout after 5000ms
+2024-02-02 08:15:26.890 [ERROR] Stack trace:
+  at ExternalService.Connect() in /app/services/external.cs:line 42
+  at RequestHandler.Process() in /app/handlers/request.cs:line 156
+2024-02-02 08:15:27.123 [WARN] Retrying connection to external service (attempt 1/3)
+2024-02-02 08:15:32.456 [ERROR] Failed to connect to external service: timeout after 5000ms
+2024-02-02 08:15:32.789 [WARN] Retrying connection to external service (attempt 2/3)
+2024-02-02 08:15:37.012 [INFO] Successfully connected to external service
+2024-02-02 08:15:37.234 [DEBUG] Sending request to external API: POST /api/v1/data
+2024-02-02 08:15:37.567 [DEBUG] Request body: {"userId":12345,"action":"sync"}
+2024-02-02 08:15:38.890 [INFO] External API response received: 201 Created
+2024-02-02 08:15:39.123 [DEBUG] Parsing response JSON: 234 bytes
+2024-02-02 08:15:39.456 [INFO] Data synchronized successfully
+2024-02-02 08:15:39.789 [DEBUG] Updating cache with key: user:12345:sync_status
+2024-02-02 08:15:40.012 [INFO] Cache updated successfully
+2024-02-02 08:15:40.234 [DEBUG] Cleaning up temporary files in /tmp/app_12345
+2024-02-02 08:15:40.567 [INFO] Request completed in 15.3s
+2024-02-02 08:15:41.890 [DEBUG] Memory usage: 456 MB / 2048 MB
+2024-02-02 08:15:42.123 [DEBUG] Active connections: 7
+2024-02-02 08:15:42.456 [INFO] Health check passed
+2024-02-02 08:15:45.789 [WARN] High memory usage detected: 1850 MB / 2048 MB (90%)
+2024-02-02 08:15:46.012 [DEBUG] Triggering garbage collection
+2024-02-02 08:15:46.234 [INFO] Garbage collection completed: freed 423 MB
+2024-02-02 08:15:46.567 [DEBUG] Memory usage after GC: 1427 MB / 2048 MB
+2024-02-02 08:16:00.890 [INFO] Scheduled task started: daily_cleanup
+2024-02-02 08:16:01.123 [DEBUG] Scanning for old log files in /var/log/app
+2024-02-02 08:16:02.456 [INFO] Found 15 log files older than 30 days
+2024-02-02 08:16:02.789 [DEBUG] Deleting file: app.log.2024-01-01.gz
+2024-02-02 08:16:03.012 [DEBUG] Deleting file: app.log.2024-01-02.gz
+2024-02-02 08:16:03.234 [INFO] Deleted 15 old log files, freed 2.3 GB disk space
+2024-02-02 08:16:03.567 [INFO] Daily cleanup task completed successfully
+2024-02-02 08:16:04.890 [DEBUG] Next scheduled run: 2024-02-03 08:16:00
+2024-02-02 08:20:15.123 [ERROR] Unhandled exception in background worker
+2024-02-02 08:20:15.456 [ERROR] Exception: NullReferenceException - Object reference not set to an instance of an object
+2024-02-02 08:20:15.789 [ERROR] Stack trace:
+  at Worker.ProcessQueue() in /app/workers/queue.cs:line 89
+  at BackgroundService.Run() in /app/services/background.cs:line 234
+2024-02-02 08:20:16.012 [WARN] Background worker crashed, restarting...
+2024-02-02 08:20:16.234 [INFO] Background worker restarted successfully
+2024-02-02 08:30:00.567 [INFO] Hourly metrics report:
+2024-02-02 08:30:00.890 [INFO]   - Total requests: 1,247
+2024-02-02 08:30:01.123 [INFO]   - Success rate: 98.4%
+2024-02-02 08:30:01.456 [INFO]   - Average response time: 234ms
+2024-02-02 08:30:01.789 [INFO]   - Error count: 20
+2024-02-02 08:30:02.012 [DEBUG] Detailed error breakdown:
+2024-02-02 08:30:02.234 [DEBUG]   - Timeout errors: 12
+2024-02-02 08:30:02.567 [DEBUG]   - Validation errors: 5
+2024-02-02 08:30:02.890 [DEBUG]   - Server errors: 3
+2024-02-02 08:45:30.123 [INFO] Received shutdown signal
+2024-02-02 08:45:30.456 [INFO] Gracefully shutting down...
+2024-02-02 08:45:30.789 [DEBUG] Closing database connections
+2024-02-02 08:45:31.012 [DEBUG] Flushing cache to disk
+2024-02-02 08:45:31.234 [INFO] All resources released
+2024-02-02 08:45:31.567 [INFO] Application stopped

@@ -1,0 +1,56 @@
+[
+  {
+    "Id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+    "Name": "Errors Only",
+    "Description": "Show only ERROR level messages",
+    "Type": "LogLevel",
+    "Pattern": "ERROR",
+    "IsInverted": false,
+    "CreatedAt": "2024-02-02T12:00:00Z"
+  },
+  {
+    "Id": "b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e",
+    "Name": "Exclude Debug",
+    "Description": "Filter out all DEBUG messages",
+    "Type": "LogLevel",
+    "Pattern": "DEBUG",
+    "IsInverted": true,
+    "CreatedAt": "2024-02-02T12:00:00Z"
+  },
+  {
+    "Id": "c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f",
+    "Name": "Today Only",
+    "Description": "Show only logs from 2024-02-02",
+    "Type": "Regex",
+    "Pattern": "^2024-02-02",
+    "IsInverted": false,
+    "CreatedAt": "2024-02-02T12:00:00Z"
+  },
+  {
+    "Id": "d4e5f6a7-b8c9-4d5e-1f2a-3b4c5d6e7f8a",
+    "Name": "Database Related",
+    "Description": "Show only database-related messages",
+    "Type": "StringContains",
+    "Pattern": "database",
+    "IsInverted": false,
+    "CreatedAt": "2024-02-02T12:00:00Z"
+  },
+  {
+    "Id": "e5f6a7b8-c9d0-4e5f-2a3b-4c5d6e7f8a9b",
+    "Name": "Performance Issues",
+    "Description": "Find slow operations and warnings",
+    "Type": "LogLevel",
+    "Pattern": "WARN,ERROR",
+    "IsInverted": false,
+    "CreatedAt": "2024-02-02T12:00:00Z"
+  },
+  {
+    "Id": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c",
+    "Name": "API Calls",
+    "Description": "Show only API request/response logs",
+    "Type": "Regex",
+    "Pattern": "(GET|POST|PUT|DELETE|PATCH)\\s+/api/",
+    "IsInverted": false,
+    "CreatedAt": "2024-02-02T12:00:00Z"
+  }
+]
