@@ -1,0 +1,125 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      semver: ${{ steps.gitversion.outputs.semVer }}
+      major: ${{ steps.gitversion.outputs.major }}
+      minor: ${{ steps.gitversion.outputs.minor }}
+      patch: ${{ steps.gitversion.outputs.patch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: '5.x'
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0
+        with:
+          useConfigFile: true
+
+      - name: Display Version
+        run: |
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+
+  build:
+    needs: version
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+            artifact: logfile-cleaner
+          - os: windows-latest
+            rid: win-x64
+            artifact: logfile-cleaner.exe
+          - os: macos-latest
+            rid: osx-arm64
+            artifact: logfile-cleaner
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore src/LogfileCleaner/LogfileCleaner.csproj
+
+      - name: Build
+        run: dotnet build src/LogfileCleaner/LogfileCleaner.csproj -c Release --no-restore
+
+      - name: Publish AOT
+        run: |
+          dotnet publish src/LogfileCleaner/LogfileCleaner.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            -p:Version=${{ needs.version.outputs.semver }} \
+            --self-contained \
+            -o ./publish/${{ matrix.rid }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: logfile-cleaner-${{ matrix.rid }}
+          path: ./publish/${{ matrix.rid }}/${{ matrix.artifact }}
+
+  release:
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          # Simple changelog from git log
+          echo "## Changes" > CHANGELOG.md
+          git log $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD \
+            --pretty=format:"- %s (%h)" >> CHANGELOG.md || echo "- Initial release" >> CHANGELOG.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.version.outputs.semver }}
+          name: Release v${{ needs.version.outputs.semver }}
+          body_path: CHANGELOG.md
+          files: |
+            artifacts/logfile-cleaner-linux-x64/logfile-cleaner
+            artifacts/logfile-cleaner-win-x64/logfile-cleaner.exe
+            artifacts/logfile-cleaner-osx-arm64/logfile-cleaner
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

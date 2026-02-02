@@ -1,0 +1,23 @@
+mode: Mainline
+branches:
+  main:
+    regex: ^main$
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+  feature:
+    regex: ^features?[/-]
+    tag: beta
+    increment: Minor
+  bugfix:
+    regex: ^(bug)?fix(es)?[/-]
+    tag: beta
+    increment: Patch
+ignore:
+  sha: []
+tag-prefix: v
+major-version-bump-message: '^(breaking|major):'
+minor-version-bump-message: '^(feat|feature):'
+patch-version-bump-message: '^(fix|patch|chore):'
+no-bump-message: '^(docs|test|style):'
+commit-message-incrementing: Enabled
